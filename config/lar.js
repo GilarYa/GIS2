@@ -81,3 +81,49 @@ map.on('click', onMapClick);
 map.on('pointermove', onMapPointerMove);
 map.on('movestart', disposePopover);
 get(URLGeoJson,responseData);
+
+  //download data point, polygon, dan polyline
+  const pointSource = new ol.source.Vector({
+    url: URLGeoJson,
+    format: new ol.format.GeoJSON()
+});
+
+//buat layer untuk point, polygon, dan polyline
+const layerpoint = new ol.layer.Vector({
+    source: pointSource,
+    style: new ol.style.Style({
+        image: new ol.style.Icon({
+            src: '../kebutuhan/img/icon.png', 
+            scale: 0.5, 
+            opacity: 1
+        })
+    })
+});
+
+const polylayer = new ol.layer.Vector({
+    source: pointSource,
+    style: function (feature) {
+        const featureType = feature.getGeometry().getType();
+        
+       
+        if (featureType === 'Polygon') {
+            return new ol.style.Style({
+                stroke: new ol.style.Stroke({
+                    color: 'orange', 
+                    width: 2
+                })
+            });
+        } else {
+            
+            return new ol.style.Style({
+                stroke: new ol.style.Stroke({
+                    color: 'purple', 
+                    width: 3
+                })
+            });
+        }
+    }
+});
+
+map.addLayer(polylayer);
+map.addLayer(layerpoint);
